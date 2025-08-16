@@ -4,8 +4,22 @@ import pg from 'pg';
 
 export default function configureSession(app) {
   const PgSession = connectPgSimple(session);
+  // Use the same connection string logic as index.js
+  const {
+    POSTGRES_USER,
+    POSTGRES_PASSWORD,
+    POSTGRES_DB,
+    POSTGRES_HOST,
+    POSTGRES_PORT,
+  } = process.env;
+
+  const POSTGRES_URL = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
   const pgPool = new pg.Pool({
-    connectionString: process.env.DATABASE_URL || 'postgres://prayag:password@localhost:5432/digivantrix',
+    connectionString: POSTGRES_URL,
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
   });
 
   app.use(
