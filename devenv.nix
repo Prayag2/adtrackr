@@ -22,4 +22,6 @@
     };
   };
 
+  enterShell = "exec zsh";
+
 }

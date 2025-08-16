@@ -1,14 +1,35 @@
 
+
 import express from 'express';
 import { Sequelize } from 'sequelize';
 import { defineModels } from './models.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 
-// Update these values as needed
-const sequelize = new Sequelize('postgres://prayag:password@localhost:5432/digivantrix');
+
+// Use environment variables for DB connection
+
+const {
+  POSTGRES_USER,
+  POSTGRES_PASSWORD,
+  POSTGRES_DB,
+  POSTGRES_HOST,
+  POSTGRES_PORT,
+} = process.env;
+
+const POSTGRES_URL = `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}`;
+const sequelize = new Sequelize(POSTGRES_URL, {
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  },
+});
 
 const models = defineModels(sequelize);
 
